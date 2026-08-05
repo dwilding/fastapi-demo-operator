@@ -72,7 +72,7 @@ def test_database_integration(charm: pathlib.Path, juju: jubilant.Juju):
 
 
 def test_app_add_name(charm: pathlib.Path, juju: jubilant.Juju):
-    """Verify that the app can add names to the database."""
+    """Verify that our app can add names to the database."""
     unit_ip = juju.status().apps[APP_NAME].units[f"{APP_NAME}/0"].address
     api_base = f"http://{unit_ip}:8000"
     response = urllib.request.urlopen(f"{api_base}/names", timeout=10)
@@ -137,3 +137,21 @@ def _get_loki_logs(loki_api_url: str) -> list[str] | None:
             if "data" in response_decoded:
                 return response_decoded["data"]
     return None
+
+
+@pytest.mark.juju_setup
+def test_integrate_prometheus(charm: pathlib.Path, juju: jubilant.Juju, cos: jubilant.Juju):
+    """Integrate our app with Prometheus from COS Lite."""
+    cos.offer("prometheus", endpoint="metrics-endpoint")
+    juju.integrate(APP_NAME, f"{cos.model}.prometheus")
+    juju.wait(jubilant.all_active)
+    cos.wait(jubilant.all_active)
+
+
+@pytest.mark.juju_setup
+def test_integrate_grafana(charm: pathlib.Path, juju: jubilant.Juju, cos: jubilant.Juju):
+    """Integrate our app with Grafana from COS Lite."""
+    cos.offer("grafana", endpoint="grafana-dashboard")
+    juju.integrate(APP_NAME, f"{cos.model}.grafana")
+    juju.wait(jubilant.all_active)
+    cos.wait(jubilant.all_active)
