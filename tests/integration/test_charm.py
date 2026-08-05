@@ -22,6 +22,7 @@ import json
 import logging
 import pathlib
 import time
+import urllib.request
 
 import jubilant
 import pytest
@@ -68,6 +69,25 @@ def test_database_integration(charm: pathlib.Path, juju: jubilant.Juju):
     juju.deploy("postgresql-k8s", channel="14/stable", trust=True)
     juju.integrate(APP_NAME, "postgresql-k8s")
     juju.wait(jubilant.all_active)
+
+
+def test_app_add_name(charm: pathlib.Path, juju: jubilant.Juju):
+    """Verify that the app can add names to the database."""
+    unit_ip = juju.status().apps[APP_NAME].units[f"{APP_NAME}/0"].address
+    api_base = f"http://{unit_ip}:8000"
+    response = urllib.request.urlopen(f"{api_base}/names", timeout=10)
+    assert json.loads(response.read()) == {"names": {}}
+    urllib.request.urlopen(
+        urllib.request.Request(
+            f"{api_base}/addname/",
+            data=b"name=elephant",
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            method="POST",
+        ),
+        timeout=10,
+    )
+    response = urllib.request.urlopen(f"{api_base}/names", timeout=10)
+    assert json.loads(response.read()) == {"names": {"1": "elephant"}}
 
 
 @pytest.fixture(scope="module")
