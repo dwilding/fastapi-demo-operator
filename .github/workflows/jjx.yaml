@@ -23,4 +23,4 @@ jobs:
       - name: Run integration tests
         run: |
           touch placeholder.charm
-          uv run --group integration --with git+https://github.com/dwilding/jjx@main pytest tests/integration -v
+          uv run --group integration --with jjx pytest tests/integration -v
