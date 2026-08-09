@@ -6,4 +6,4 @@ The charm's integration tests are slightly different from the *zero to hero* cha
 - There's an extra test that exercises the workload over HTTP.
 - There are extra tests that integrate the charm with Prometheus and Grafana (the *zero to hero* charm already tests the Loki integration).
 
-The charm's CI workflows are based on [How to set up continuous integration for a charm](https://canonical.com/juju/docs/ops/latest/howto/set-up-continuous-integration-for-a-charm/).
+The charm's CI workflows are based on [How to set up continuous integration for a charm](https://canonical.com/juju/docs/ops/latest/howto/set-up-continuous-integration-for-a-charm/). There's an extra workflow that uses [jjx](https://github.com/dwilding/jjx) to simulate the charm's integration tests (approx 70% faster than the real integration tests).
