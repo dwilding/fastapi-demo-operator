@@ -22,6 +22,7 @@ import json
 import logging
 import pathlib
 import time
+import urllib.error
 import urllib.request
 
 import jubilant
@@ -75,8 +76,20 @@ def test_app_add_name(charm: pathlib.Path, juju: jubilant.Juju):
     """Verify that our app can add names to the database."""
     unit_ip = juju.status().apps[APP_NAME].units[f"{APP_NAME}/0"].address
     api_base = f"http://{unit_ip}:8000"
-    response = urllib.request.urlopen(f"{api_base}/names", timeout=10)
+    # Check that the name store is initially empty.
+    # Retry on failure in case the workload hasn't fully started after the latest replan.
+    for attempt in range(10):
+        if attempt:  # If not the first attempt, wait before retrying.
+            time.sleep(1)
+        try:
+            response = urllib.request.urlopen(f"{api_base}/names", timeout=2)
+            break
+        except urllib.error.HTTPError:
+            pass
+    else:
+        raise AssertionError(f"{api_base}/names did not succeed")
     assert json.loads(response.read()) == {"names": {}}
+    # Add an entry to the name store.
     urllib.request.urlopen(
         urllib.request.Request(
             f"{api_base}/addname/",
@@ -84,9 +97,10 @@ def test_app_add_name(charm: pathlib.Path, juju: jubilant.Juju):
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             method="POST",
         ),
-        timeout=10,
+        timeout=2,
     )
-    response = urllib.request.urlopen(f"{api_base}/names", timeout=10)
+    # Check that the name store contains the new entry.
+    response = urllib.request.urlopen(f"{api_base}/names", timeout=2)
     assert json.loads(response.read()) == {"names": {"1": "elephant"}}
 
 
