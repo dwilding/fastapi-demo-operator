@@ -84,7 +84,7 @@ def test_app_add_name(charm: pathlib.Path, juju: jubilant.Juju):
         try:
             response = urllib.request.urlopen(f"{api_base}/names", timeout=2)
             break
-        except urllib.error.HTTPError:
+        except (urllib.error.HTTPError, urllib.error.URLError):
             pass
     else:
         raise AssertionError(f"{api_base}/names did not succeed")
