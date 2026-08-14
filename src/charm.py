@@ -204,10 +204,10 @@ class FastAPIDemoCharm(ops.CharmBase):
                 time.sleep(1)  # If not the first attempt, wait before retrying.
             try:
                 version = fastapi_demo.get_version(config.server_port)
+                break
             except urllib.error.URLError:
                 logger.info("Workload not yet available (attempt %d)", attempt + 1)
                 continue
-            break
         else:
             logger.error("The workload was not available within the expected time")
             raise RuntimeError("workload is not available")
