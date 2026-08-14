@@ -1,6 +1,10 @@
 This is a small Kubernetes charm based on [From zero to hero: Write your first Kubernetes charm](https://canonical.com/juju/docs/ops/latest/tutorial/from-zero-to-hero-write-your-first-kubernetes-charm/). The charm requires a PostgreSQL database and supports observability apps from the COS Lite bundle.
 
-The charm's integration tests are slightly different from the *zero to hero* charm:
+The code is slightly different from the *zero to hero* charm:
+
+- `fastapi_demo.get_version()` is called in a retry loop, to avoid a potential race condition.
+
+The charm's integration tests are also slightly different from the *zero to hero* charm:
 
 - The tests that deploy the charm and integrate it with PostgreSQL are marked `smoke`.
 - There's an extra test that exercises the workload over HTTP.
