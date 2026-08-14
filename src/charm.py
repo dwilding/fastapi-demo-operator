@@ -207,7 +207,6 @@ class FastAPIDemoCharm(ops.CharmBase):
                 break
             except urllib.error.URLError:
                 logger.info("Workload not yet available (attempt %d)", attempt + 1)
-                continue
         else:
             logger.error("The workload was not available within the expected time")
             raise RuntimeError("workload is not available")
