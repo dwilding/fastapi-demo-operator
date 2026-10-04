@@ -5,6 +5,7 @@ The charm's integration tests extend the *zero to hero* charm:
 - The tests that deploy the charm and integrate it with PostgreSQL are marked `smoke`.
 - There's an extra test that exercises the workload over HTTP.
 - There are extra tests that integrate the charm with Prometheus and Grafana (the *zero to hero* charm already tests the Loki integration).
+- The tests use [jubilant-prewire](https://github.com/dwilding/jubilant-prewire) to guard against slow image pulls.
 
 The charm's CI workflows are based on [How to set up continuous integration for a charm](https://canonical.com/juju/docs/ops/latest/howto/set-up-continuous-integration-for-a-charm/). 
 
