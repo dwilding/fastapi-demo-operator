@@ -18,6 +18,8 @@ assumes:
   - juju >= 3.6
   - k8s-api
 
+charm-user: non-root
+
 parts:
   charm:
     plugin: uv
