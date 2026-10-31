@@ -71,6 +71,7 @@ def test_database_integration(charm: pathlib.Path, juju: jubilant.Juju):
     juju.wait(jubilant.all_active)
 
 
+@pytest.mark.smoke
 def test_app_add_name(charm: pathlib.Path, juju: jubilant.Juju):
     """Verify that our app can add names to the database."""
     unit_ip = juju.status().apps[APP_NAME].units[f"{APP_NAME}/0"].address
